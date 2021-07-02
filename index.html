@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- style sheet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />
+    
+    <!-- script sheet -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+        
+    <style>
+        #issMap {
+            height: 480px;
+            width: 90vw;
+            margin: auto;
+        }
+        h1,p{
+            margin-left: 60px;
+            text-align: center;
+        }
+    </style>
+    
+    <title>Showing the letitude and longitute of ISS</title>
+</head>
+
+<body>
+    <h1>Where is the International Space Station </h1>
+    <p>Latitude  <span id="latitude"></span></p>
+    <p>Longitude - <span id="longitude"></span></p>
+    <div id="issMap"></div>
+    
+    <script>
+
+        //   used leaflet.js library
+            var mymap = L.map('issMap').setView([0, 0], 2);
+
+            var myIcon = L.icon({
+            iconUrl: 'iss-png-mission-800.png',
+            iconSize: [40, 70],
+            iconAnchor: [25, 16],
+            });
+
+            var marker = L.marker([0, 0],{icon : myIcon}).addTo(mymap);
+            L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                maxZoom: 18,
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+                'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                id: 'mapbox/streets-v11',
+                tileSize: 512,
+                zoomOffset: -1
+            }).addTo(mymap);
+
+
+        // ISS API that provide information about international space station    
+            
+        const ISS_url = "https://api.wheretheiss.at/v1/satellites/25544";
+        async function getISS() {
+
+            const response = await fetch(ISS_url);
+
+            const data = await response.json();
+            const { latitude, longitude } = data;
+            document.getElementById("latitude").innerHTML = "  " + latitude;
+            document.getElementById("longitude").innerHTML = "  " + longitude;
+            marker.setLatLng([latitude,longitude]);
+        }
+        getISS();
+    </script>
+</body>
+
+</html>
